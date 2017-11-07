@@ -18,7 +18,7 @@
 </head>
 <body>
     <div class="content">
-    	<div class="container container1 rules" id="rulesField">
+    	<div class="container field_wrapper rules" id="rulesField">
     		<article class="text">
 	    		<h2> How to play:</h2>
 	    		<span>Memory is a counter game, where the object is to find pairs. When the game begins, all pictures are hidden.</span>
@@ -34,27 +34,27 @@
 	    		</span>
 	    	</article>
     	</div>
-    	<div class="container container1 game_field" id="gameField">
+    	<div class="container field_wrapper game_field" id="gameField">
     	</div>
-    	<div class="container container2">
-			<button class="button" id = "newGame">New game</button>
-			<div class="maximized">Skird Cards
-				<button class="button button1" id = "skirt1">
+    	<div class="container menu_wrapper">
+			<button class="item" id = "newGame">New game</button>
+			<ul class="maximized">Skird Cards
+				<li><button class="item sub_menu_item" id = "firstSkirt">
 					<img class="skirt" src = "img/9.jpg"/>
-				</button>
-				<button class="button button1" id = "skirt2">
+				</button></li>
+				<li><button class="item sub_menu_item" id = "secondSkirt">
 					<img class="skirt" src = "img/10.jpg"/>
-				</button>
-				<button class="button button1" id = "skirt3">
+				</button></li>
+				<li><button class="item sub_menu_item" id = "thirdSkirt">
 					<img class="skirt" src = "img/11.jpg"/>
-				</button>
-			</div>
-			<div class="maximized">Difficulty
-				<button class="button button1" id = "difficultyLow">Low (4x2)</button>
-				<button class="button button1" id = "difficultyMedium">Medium (4x3)</button>
-				<button class="button button1" id = "difficultyHight">Hight(4x4)</button>
-			</div>
-			<button class="button unvisible" id = "showRules">Show Rules</button> 
+				</button></li>
+			</ul>
+			<ul class="maximized">Difficulty
+				<li><button class="item sub_menu_item" id = "difficultyLow">Low (4x2)</button></li>
+				<li><button class="item sub_menu_item" id = "difficultyMedium">Medium (4x3)</button></li>
+				<li><button class="item sub_menu_item" id = "difficultyHight">Hight(4x4)</button></li>
+			</ul>
+			<button class="item unvisible" id = "showRules">Show Rules</button> 
 			<div class = "timer unvisible" id="timer"></div>		
     	</div>
     </div>

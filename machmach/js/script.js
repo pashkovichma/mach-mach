@@ -7,29 +7,71 @@ window.addEventListener("load", function() {
 		rulesField = document.getElementById("rulesField"),
 		gameField = document.getElementById("gameField"),
 		btnNewGame = document.getElementById("newGame"),
-		btnSkirt1 = document.getElementById("skirt1"),
-		btnSkirt2 = document.getElementById("skirt2"),
-		btnSkirt3 = document.getElementById("skirt3"),
+		btnFirstSkirt = document.getElementById("firstSkirt"),
+		btnSecondSkirt = document.getElementById("secondSkirt"),
+		btnThirdSkirt = document.getElementById("thirdSkirt"),
 		openedCards = 0,
 		btnDifficultyLow = document.getElementById("difficultyLow"),
 		btnDifficultyMedium = document.getElementById("difficultyMedium"),
 		btnDifficultyHight = document.getElementById("difficultyHight"),
 		btnShowRules = document.getElementById("showRules"),
-	    secs,
-	    mins,
-	    timer,
-	    timerMove,
-	    flag=0,
 	    timerField = document.getElementById("timer");
 	
 		btnNewGame.addEventListener("click",fNewGame);
-		btnSkirt1.addEventListener("click", ()=>skirt=9);
-		btnSkirt2.addEventListener("click", ()=>skirt=10);
-		btnSkirt3.addEventListener("click", ()=>skirt=11);
+		btnFirstSkirt.addEventListener("click", ()=>skirt=9);
+		btnSecondSkirt.addEventListener("click", ()=>skirt=10);
+		btnThirdSkirt.addEventListener("click", ()=>skirt=11);
 		btnShowRules.addEventListener("click",fShowRules);
 		btnDifficultyLow.addEventListener("click", ()=>difficulty=4);
 		btnDifficultyMedium.addEventListener("click", ()=>difficulty=6);
 		btnDifficultyHight.addEventListener("click", ()=>difficulty=8);
+
+		class Timer {
+	    constructor(timerField, interval = 1000) {
+	        this.interval = interval;
+	        this.timerField = timerField;
+	        this.ticker = this.ticker.bind(this);
+	    }
+
+	    serialize(delay) {
+	    	var sec = Math.floor(delay/1000);
+	    	var min = Math.floor(sec/60);
+	    	var second = sec - min*60;
+	    	if(min<10) min = "0"+ min;
+	    	if(second<10) second = "0"+second;
+	    	var time = min+":"+second;
+	    	return time;
+	    }
+
+	    serializeFinal(delay) {
+	    	var sec = Math.floor(delay/1000);
+	    	--sec;
+	    	var min = Math.floor(sec/60);
+	    	var second = sec - min*60;
+	    	if(min<10) min = "0"+ min;
+	    	if(second<10) second = "0"+second;
+	    	var time = min+":"+second;
+	    	return time;
+	    }
+
+	    ticker() {
+	        this.timerField.innerHTML = this.serialize(Date.now() - this.initialTime);
+	        return this
+	    };
+
+	    stop() {
+	        clearInterval(this.timer);
+	        return this.serializeFinal(Date.now() - this.initialTime);
+	    }
+	    start() {
+	    	this.timerField.innerHTML = "00:00";
+	        this.initialTime = Date.now();
+	        this.timer = setInterval(this.ticker, this.interval);
+	        return this;
+	    }
+	}
+
+	var myTimer = new Timer (timerField);		 
 	
 	function fShowRules(){
 		rulesField.classList.toggle("unvisible");
@@ -43,8 +85,7 @@ window.addEventListener("load", function() {
 		if(timerField.classList.contains("unvisible")){
 			timerField.classList.remove("unvisible");
 		}
-		flag = 0;
-		fTimer();
+		myTimer.start();
 		rulesField.classList.add("unvisible");
 		if (btnShowRules.classList.contains("unvisible")){
 			btnShowRules.classList.remove("unvisible");
@@ -52,13 +93,10 @@ window.addEventListener("load", function() {
 		fNewBoard(difficulty);
 	}
 
-	Array.prototype.memory_tile_shuffle = function(){
-	    function compareRandom(a, b) {
+	function compareRandom(a, b) {
   			return Math.random() - 0.5;
 		}
-		this.sort(compareRandom);
-	}
-
+	
 	function fNewBoard(difficulty){
 		memory_array =[];
 		var output = '';
@@ -68,8 +106,8 @@ window.addEventListener("load", function() {
 			memory_array[q] = etalon_array[q];
 		}
 		memory_array = memory_array.concat(memory_array);
-		memory_array.memory_tile_shuffle();
-			
+		memory_array.sort(compareRandom);
+
 	    for (var i = 0; i < memory_array.length; i++){
 	    	var	a = document.createElement("button"),
 				b = document.createElement("div"),
@@ -112,25 +150,27 @@ window.addEventListener("load", function() {
 			}
 			else{
 				setTimeout(func1,150);
-				function func1(){
-					check_array[0].firstChild.classList.toggle("flipped");
-					check_array[1].firstChild.classList.toggle("flipped");
-					check_array[0].disabled = false;
-					check_array[1].disabled = false;
-					check_array = [];
-				}
+				
 			}
 			if(openedCards == difficulty*2){
 				timerField.classList.add("unvisible");
 			}
 			setTimeout(
 			()=>{if(openedCards == difficulty*2){
-				flag = 1;
-				alert("You\'ve matched all cards in "+mins + "minutes "+(secs-1)+" seconds. Let\'s try again!");
-				gameField.innerHTML = "";
-				openedCards = 0;				
+				
+				
+				alert("You\'ve matched all cards in " + myTimer.stop() + " seconds. Let\'s try again!");
+				openedCards = 0;			
 			}}, 1000);
 		}
+
+		function func1(){
+			check_array[0].firstChild.classList.toggle("flipped");
+			check_array[1].firstChild.classList.toggle("flipped");
+			check_array[0].disabled = false;
+			check_array[1].disabled = false;
+			check_array = [];
+		}			
 	}
 
 	function fMove(card){
@@ -140,32 +180,5 @@ window.addEventListener("load", function() {
 			    card.style.left = timePassed / 2 + 'px';
        			if (timePassed > 2000) clearInterval(timerMove);
 		    }, 20);
-	}
-
-  	function fTimer(){
-		if (timer){
-			clearInterval(timer);
-		} 
-		mins = 0;
-	 	secs = 0;
-	 	if(secs<10){
-		   	secs = "0"+secs;
-		}
-	 	timerField.innerHTML = mins + ' : ' + secs;
-		timer = setInterval(fTimerOn, 1000);
-	}
-	function fTimerOn() {
-	   	if(flag==1){
-			clearInterval(timer);
-		}
-		if (secs==59){
-	   		mins++;
-	   		secs = 0;
-	   	}
-	   	else secs++;
-	   	if(secs<10){
-	   	secs = "0"+secs;
-		}	
-		timerField.innerHTML = mins + ':' + secs;
 	}
 })
